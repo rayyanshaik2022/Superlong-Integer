@@ -1,7 +1,7 @@
 public class SuperLong {
     
-    public SuperLong(){
-
+    public SuperLong(){ 
+        
     }
     
 }
