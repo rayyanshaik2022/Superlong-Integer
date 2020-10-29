@@ -44,6 +44,22 @@ public class Binteger {
         int negCount = 0;
         int add = 0;
 
+        boolean flipSign = false;
+        boolean subCheck = false;
+
+        if (!isNegative && b.getIsNegative()) {
+            isNegative  = true;
+            b.isNegative = false;
+            flipSign = true;
+        }
+        else if (isNegative  && b.getIsNegative()) {
+            isNegative = false;
+            b.isNegative = false;
+            flipSign  = true;
+            subCheck = true;
+            
+        }
+
         boolean negative = false;
 
         for (int i=0; i < sum.length; i++) {
@@ -71,46 +87,48 @@ public class Binteger {
                     bVal[bVal.length-2-i] -= 1;
                 } 
 
-                sum[sum.length-2-i] -= 10;
+                //sum[sum.length-2-i] -= 10;
                 
                 negCount ++;
             }
             else if (add < -9) {
-                System.out.println(add + " " + carry);
 
                 carry = (add - Math.abs(add % 10))/10;
                 add = Math.abs(add % 10);
-
-                System.out.println(add + " " + carry);
-                System.out.println();
                 negCount ++;
                 
             }
             else {
                 carry = 0;
+                posCount  ++;
             }
 
 
             sum[sum.length-1-i] = add;
             add = 0;
-            carry += futureCarry;
         }
 
 
         // Determine if negative
-        
-        if (isNegative && b.getIsNegative() && true) {
+
+        if (flipSign && subCheck) {
             negative = true;
         }
-        if (negCount  > posCount) {
-            negative  = true;
+        else if ( !subCheck && negCount  < posCount) {
+            negative = true;
+            
+        }
+        else {
+            negative  = false;
         }
         
-        System.out.println(posCount + " " + negCount);
+        
+        if (flipSign) {
+            isNegative  = !isNegative;
+            b.isNegative  = !isNegative;
+        }
 
-
-        System.out.println("Is Negative: " + negative);
-        System.out.println("SUM: ");
+        System.out.println(negative);
         System.out.println(Arrays.toString(sum));
     }
 

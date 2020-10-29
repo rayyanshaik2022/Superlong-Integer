@@ -10,7 +10,7 @@ class Main{
         //SuperLong m = new SuperLong("4344936009099999999");
 
         Binteger z = new Binteger("-4025372428371997405");
-        Binteger x = new Binteger("4344936009049315546");
+        Binteger x = new Binteger("-4344936009049315546");
         //  434493600904 931 5546
         //- 402537242837 199 7405
 
