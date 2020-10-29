@@ -43,10 +43,29 @@ public class Binteger {
     }
 
     public Binteger add(Binteger b) {
+
+        int comparison = asAbsString.compareTo(b.asAbsString);
+
+        if (comparison > 0) {
+            int[] tval = val;
+            boolean tisNegative = isNegative;
+            String tasString = asString;
+            String tasAbsString = asAbsString;
+
+            val = b.val;
+            isNegative = b.isNegative;
+            asString = b.asString;
+            asAbsString = b.asAbsString;
+
+            b.val = tval;
+            b.isNegative = tisNegative;
+            b.asString  = tasString;
+            b.asAbsString  = tasAbsString;
+        }
+
         int[] bVal = b.getArray();
         int[] sum = new int[Math.max(val.length, bVal.length)+1];
         int carry = 0;
-        int futureCarry = 0;
         int posCount = 0;
         int negCount = 0;
         int add = 0;
@@ -54,21 +73,17 @@ public class Binteger {
         boolean flipSign = false;
         boolean subCheck = false;
 
-        int comparison = asAbsString.compareTo(b.asAbsString);
-        System.out.println("INT: " + comparison);
-
-        if (!isNegative && b.getIsNegative() && comparison < 0) {
-            System.out.println("TRUE");
+        if (!isNegative && b.getIsNegative()) {
             isNegative  = true;
             b.isNegative = false;
             flipSign = true;
         }
         else if (isNegative  && b.getIsNegative()) {
+
             isNegative = !isNegative;
             b.isNegative = !b.isNegative;
             flipSign  = true;
             subCheck = true;
-            System.out.println("FALSE");
             
         }
 
@@ -137,11 +152,7 @@ public class Binteger {
             isNegative  = !isNegative;
             b.isNegative  = !b.isNegative;
         }
-
-        ///System.out.println(negative);
-        //System.out.println(Arrays.toString(sum));
-        System.out.println(negative);
-        System.out.println(Arrays.toString(sum));
+        
         return new Binteger("-123123");
     }
 
