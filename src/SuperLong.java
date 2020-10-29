@@ -4,13 +4,29 @@ public class SuperLong {
 
     String value;
     long[] splitValue;
+    boolean isNegative = false;
     
     public SuperLong(String n){
         value = n;
+        isNegative = n.charAt(0) == '-';
         splitValue = toLongArray(n);
+        
     }
     public SuperLong(long[] n) {
         splitValue = n;
+        boolean negativeFlag = false;
+
+        for (int i=n.length-1; i >= 0; i--) {
+            if (n[i] != 0 && !negativeFlag) {
+                isNegative = n[i] < 0;
+                negativeFlag = true;
+                continue;
+            }
+            else if (negativeFlag) {
+                n[i] = n[i] * -1;
+            }
+        }
+
         value = toString();
     } 
 
@@ -42,41 +58,38 @@ public class SuperLong {
     public long[] getSplitValue() {
         return splitValue;
     }
-     
-    private long[] toLongArray(String a) {
-        long[] arrayA;
-        if (a.length() < 10) {
-            arrayA = new long[1];
-            arrayA[0] = Long.parseLong(a);
-        }
-        else {
-            arrayA = new long[(int)Math.ceil(a.length()/9.0)];
-            boolean isNegative = a.charAt(0) == '-';
-            if (isNegative) {
-                a = a.substring(1,a.length());
-            }
 
-            while (a.length() % 9 != 0) {
-                a = "0" + a;
-            }
+    public long[] toLongArray(String a) {
 
-            for (int i = 0; i < a.length(); i++) {
-                if (i%9 == 0) {
-                    if (isNegative) {
-                        arrayA[i/8] = Long.parseLong("-"+a.substring(i, i+9));
-                    }
-                    else {
-                        arrayA[i/8] = Long.parseLong(a.substring(i, i+9));
-                    }
-                    
+        char[] chars = a.toCharArray();
+        long[] array = new long[(int)Math.ceil(a.length()/9.0)];
+        
+        int c1 = array.length-1;
+        int c2 = 0;
+        String current = "";
+        for (int i=chars.length-1; i>= 0; i--) {
+            if (c2 < 9) {
+                current = chars[i] + current;
+                c2 ++;
+            }
+            if (c2>=9 || i == 0) {
+                System.out.println("c2:"+c2+" i:"+i);
+                array[c1] = Long.parseLong(current);
+                if (isNegative && array[c1] > 0) {
+                    array[c1] *= -1;
                 }
-                
+                c2 = 0;
+                c1 --;
+                current = "";
             }
         }
 
-        return arrayA;
+
+        System.out.println("Converted array");
+        System.out.println(Arrays.toString(array));
+        return array;
     }
-    
+
     public SuperLong add(SuperLong b) {
 
         long[] aSplit = splitValue;
@@ -94,50 +107,22 @@ public class SuperLong {
                 add += bSplit[bSplit.length-i-1];
             }
             sum[size-i-1] = add + carry;
-            add = 0;
-        }
-
-        return new SuperLong(sum);
-    }
-
-    public String old(String a, String b) {
-
-        while (b.length() < a.length()) {
-            b = "0" + b;
-        }
-        while (a.length() < b.length()) {
-            a = "0" + a;
-        }
-        
-        long[] arrayA = toLongArray(a);
-        long[] arrayB = toLongArray(b);
-
-        int size = arrayA.length;
-
-        long[] sum = new long[size+1];
-
-        long carry = 0; 
-        
-        for (int i = size-1; i >= 0; i--) {
-            long newSum = arrayA[i] + arrayB[i] + carry;
-            sum[i] = newSum;
-            String added = String.valueOf(newSum);
-            if ((newSum >= 0 && added.length() > 9) || (newSum < 0 && added.length() > 10)) {
-                carry = Long.parseLong(added.substring(0, added.length()-8));
-            }
-        }
-
-        String output = "";
-        for (int i=0; i<sum.length; i++) {
-            if (i != 0) {
-                output += Math.abs(sum[i]);
-            }
-            else {
-                output += sum[i];
-            }
             
+            
+            // set new carry
+            if (add + carry > 999999999) {
+                carry = add+carry-999999999;
+            }
+            else if (add + carry < -999999999) {
+                carry = add+carry + 999999999;
+            }
+            add = 0;
+            //System.out.println("carry " + carry);
         }
-        return output.substring(0, output.length()-1);
+
+        System.out.println("SUM: ");
+        System.out.println(Arrays.toString(sum));
+        return new SuperLong(sum);
     }
 
 }
