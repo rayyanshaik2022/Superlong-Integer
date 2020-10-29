@@ -7,10 +7,17 @@ public class Binteger {
     int[] val;
     boolean isNegative;
     String asString;
+    String asAbsString;
 
     public Binteger(String n) {
         asString = n;
         isNegative = n.charAt(0) == '-';
+        if (isNegative) {
+            asAbsString  = n.substring(1);
+        }
+        else {
+            asAbsString = n;
+        }
         
         char[] split = n.toCharArray();
 
@@ -35,7 +42,7 @@ public class Binteger {
         return isNegative;
     }
 
-    public void add(Binteger b) {
+    public Binteger add(Binteger b) {
         int[] bVal = b.getArray();
         int[] sum = new int[Math.max(val.length, bVal.length)+1];
         int carry = 0;
@@ -47,16 +54,21 @@ public class Binteger {
         boolean flipSign = false;
         boolean subCheck = false;
 
-        if (!isNegative && b.getIsNegative()) {
+        int comparison = asAbsString.compareTo(b.asAbsString);
+        System.out.println("INT: " + comparison);
+
+        if (!isNegative && b.getIsNegative() && comparison < 0) {
+            System.out.println("TRUE");
             isNegative  = true;
             b.isNegative = false;
             flipSign = true;
         }
         else if (isNegative  && b.getIsNegative()) {
-            isNegative = false;
-            b.isNegative = false;
+            isNegative = !isNegative;
+            b.isNegative = !b.isNegative;
             flipSign  = true;
             subCheck = true;
+            System.out.println("FALSE");
             
         }
 
@@ -114,22 +126,23 @@ public class Binteger {
         if (flipSign && subCheck) {
             negative = true;
         }
-        else if ( !subCheck && negCount  < posCount) {
-            negative = true;
-            
+        else if (!flipSign) {
+            negative = false;
         }
         else {
-            negative  = false;
+            negative = true;
         }
-        
         
         if (flipSign) {
             isNegative  = !isNegative;
-            b.isNegative  = !isNegative;
+            b.isNegative  = !b.isNegative;
         }
 
+        ///System.out.println(negative);
+        //System.out.println(Arrays.toString(sum));
         System.out.println(negative);
         System.out.println(Arrays.toString(sum));
+        return new Binteger("-123123");
     }
 
 }
