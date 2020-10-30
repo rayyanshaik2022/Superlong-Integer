@@ -267,4 +267,58 @@ public class Binteger {
         
         return x;
     }
+
+    //TODO change to private
+    public int[] simpleMultiply(int b, int place) {
+        int[] product = new int[val.length+1+(place-1)];
+
+        int carry = 0;
+        int mult;
+        for (int i = 0; i<val.length; i++) {
+            mult = (val[val.length-1-i] * b) + carry;
+
+            if (mult > 9) {
+                carry = (mult - (mult%10))/10;
+                mult = mult%10;
+            }
+            else {
+                carry = 0;
+            }
+
+            product[product.length-1-i-place+1] = mult;
+        }
+        if (carry % 10 == 0 && carry != 0) {
+            product[product.length-1-val.length-place+1] = carry/10;
+        }
+        else if (carry != 0) {
+            product[product.length-1-val.length-place+1] = carry % 10;
+        }
+
+        return product;
+    }
+
+    public Binteger multiply(Binteger b) {
+        int[][] matrix = new int[b.val.length][val.length];
+
+        /*
+        For index of b, multiply against whole of self
+        */
+
+        for (int i=0; i<b.val.length; i++) {
+            matrix[i] = simpleMultiply(b.val[i], b.val.length-i);
+        }
+
+        Binteger x = new Binteger("0");
+        Binteger y;
+        for (int i=0; i<matrix.length; i++) {
+            y = new Binteger(matrix[i], false);
+            x = x.add(y);
+        }
+
+        if (!(isNegative == b.isNegative)) {
+            x.isNegative = !x.isNegative;
+        }
+        return x;
+
+    }
 }
