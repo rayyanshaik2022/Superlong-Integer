@@ -1,23 +1,15 @@
 import java.util.Arrays;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 public class Binteger {
     
     public int[] val;
     public boolean isNegative;
     public String asString;
-    public String asAbsString;
 
     public Binteger(String n) {
         asString = n;
         isNegative = n.charAt(0) == '-';
-        if (isNegative) {
-            asAbsString  = n.substring(1);
-        }
-        else {
-            asAbsString = n;
-        }
         
         char[] split = n.toCharArray();
 
@@ -35,6 +27,20 @@ public class Binteger {
         }
     }
 
+    public Binteger(int[] a, boolean negative) {
+        val = reduce(a);
+        isNegative = negative;
+        asString = toString(val);
+
+    }
+
+    private String toString(int[] a) {
+        return Arrays.toString(a);
+    } 
+    public String toString() {
+        return asString;
+    }
+
     public int[] getArray() {
         return val;
     }
@@ -45,6 +51,19 @@ public class Binteger {
     private int[] reduce(int[] a) {
         
         int start = 0;
+        for (int i=0; i<a.length; i++) {
+            if (a[i] != 0) {
+                start = i;
+                break;
+            }
+        }
+
+        int[] b = new int[a.length-start];
+        for (int i=0; i<b.length; i++) {
+            b[b.length-1-i] = a[a.length-1-i];
+        }
+
+        return b;
     }
 
     public int compare(Binteger b, boolean ignoreNegative) {
@@ -62,7 +81,8 @@ public class Binteger {
                 return 0;
             }
             else if (isNegative != b.getIsNegative()) {
-                 return isNegative ? -1 : 1;
+               
+                return isNegative ? -1 : 1;
             }
         }
 
@@ -85,11 +105,11 @@ public class Binteger {
         // If the sizes are the same
         for (int i=val.length-1; i>=0; i--) {
             if (val[i] > b.val[i]) {
-                // if one negative is larger than the other
-                return 1;
+                // TODO maybe fix -> should the ternaries be the same?
+                return isNegative ? -1 : 1;
             }
             else if (val[i] < b.val[i]) {
-                return -1;
+                return isNegative ? -1 : 1;
             }
         }
 
@@ -100,22 +120,19 @@ public class Binteger {
 
     public Binteger add(Binteger b) {
      
-
-        if (compare(b, true) > 0) {
+        System.out.println("COMPARE: " + compare(b, false));
+        if (compare(b, false) != 0 && compare(b, true) > 0) {
             int[] tval = val;
             boolean tisNegative = isNegative;
             String tasString = asString;
-            String tasAbsString = asAbsString;
 
             val = b.val;
             isNegative = b.isNegative;
             asString = b.asString;
-            asAbsString = b.asAbsString;
 
             b.val = tval;
             b.isNegative = tisNegative;
             b.asString  = tasString;
-            b.asAbsString  = tasAbsString;
         }
 
         int[] bVal = b.getArray();
@@ -141,6 +158,7 @@ public class Binteger {
             subCheck = true;
             
         }
+        
 
         boolean negative = false;
 
@@ -208,9 +226,9 @@ public class Binteger {
             b.isNegative  = !b.isNegative;
         }
 
-        //System.out.println("Is Negative: " + negative);
-        //System.out.println(Arrays.toString(sum));
-        return new Binteger("-123123");
+
+
+        return new Binteger(sum, negative);
     }
 
 }
