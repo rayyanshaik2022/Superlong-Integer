@@ -42,11 +42,43 @@ public class Binteger {
         return isNegative;
     }
 
+    public int compare(Binteger b) {
+        
+        /* 
+            returns 1 if parameter is less
+            returns 0 if parameter is equal
+            returns -1 if parameter is greater
+        */
+
+        if (val == b.val) {
+            return 0;
+        }
+        
+        if (val.length > b.val.length) {
+            return 1;
+        }
+        else if (1) {
+            
+        }
+
+    }
+
     public Binteger add(Binteger b) {
 
-        int comparison = asAbsString.compareTo(b.asAbsString);
+        int comparison = asString.compareTo(b.asString);
+        int comparison2 = asAbsString.compareTo(b.asAbsString);
 
-        if (comparison > 0) {
+        if (val.hashCode() > b.val.hashCode()) {
+            comparison2 = -1;
+        }
+        else if (val.hashCode() < b.val.hashCode()) {
+            comparison2 = 1;
+        }
+
+        System.out.println("C1: " +comparison + "  C2: " + comparison2);
+        System.out.println("x: " +isNegative + "  z: " + b.isNegative);
+
+        if ((comparison < 0 && comparison2 > 0) || (comparison > 0 && comparison2 > 0)) {
             int[] tval = val;
             boolean tisNegative = isNegative;
             String tasString = asString;
@@ -61,6 +93,7 @@ public class Binteger {
             b.isNegative = tisNegative;
             b.asString  = tasString;
             b.asAbsString  = tasAbsString;
+            System.out.println("triggered");
         }
 
         int[] bVal = b.getArray();
@@ -152,7 +185,9 @@ public class Binteger {
             isNegative  = !isNegative;
             b.isNegative  = !b.isNegative;
         }
-        
+
+        System.out.println(negative);
+        System.out.println(Arrays.toString(sum));
         return new Binteger("-123123");
     }
 
