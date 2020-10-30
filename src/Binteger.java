@@ -30,14 +30,22 @@ public class Binteger {
     public Binteger(int[] a, boolean negative) {
         val = reduce(a);
         isNegative = negative;
-        asString = toString(val);
+        asString = null;
 
     }
 
     private String toString(int[] a) {
-        return Arrays.toString(a);
+        
+        String finalString = "";
+        for (int i = 0; i<a.length; i++) {
+            finalString  += a[i];
+        }
+        return (isNegative ? "-" : "") + finalString;
     } 
     public String toString() {
+        if (asString == null) {
+            asString = toString(val);
+        }
         return asString;
     }
 
@@ -241,7 +249,7 @@ public class Binteger {
             negative = true;
         }
         
-        if (flipSign) {
+        if (!flipSign) {
             isNegative  = !isNegative;
             b.isNegative  = !b.isNegative;
         }
