@@ -8,8 +8,8 @@ class Main{
         //Binteger z = new Binteger("4025372428371997405");
         //Binteger x = new Binteger("-4344936009049315546");
         
-        Binteger z = new Binteger("2576317801983412857");
-        Binteger x = new Binteger("-7284315803825116935");
+        Binteger z = new Binteger("4344936009049315546");
+        Binteger x = new Binteger("4025372428371997405");
 
         /*
         WORKS:
@@ -32,7 +32,7 @@ class Main{
 
         long start = System.currentTimeMillis();
         for (int i=0; i<1; i++) {
-            Binteger l =  z.add(x);
+            Binteger l =  z.subtract(x);
             System.out.println(l.getIsNegative());
             System.out.println(l.toString());
         }

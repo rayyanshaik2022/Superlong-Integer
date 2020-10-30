@@ -74,6 +74,7 @@ public class Binteger {
             returns -1 if parameter is greater
         */
 
+
         // If false, this checks for literal value
         // and not absolute value
         if (!ignoreNegative) {
@@ -83,6 +84,12 @@ public class Binteger {
             else if (isNegative != b.getIsNegative()) {
                
                 return isNegative ? -1 : 1;
+            }
+            else if (isNegative  && b.asString == "0") {
+                return -1;
+            }
+            else if (!isNegative && b.asString == "0") {
+                return 1;
             }
         }
 
@@ -103,13 +110,19 @@ public class Binteger {
         }
 
         // If the sizes are the same
-        for (int i=val.length-1; i>=0; i--) {
+        for (int i=0; i<val.length; i++) {
             if (val[i] > b.val[i]) {
-                // TODO maybe fix -> should the ternaries be the same?
-                return isNegative ? -1 : 1;
+                if (isNegative && !ignoreNegative) {
+                    return -1;
+                }
+                return 1;
             }
             else if (val[i] < b.val[i]) {
-                return isNegative ? -1 : 1;
+
+                if (isNegative && !ignoreNegative) {
+                    return 1;
+                }
+                return -1;
             }
         }
 
@@ -120,8 +133,10 @@ public class Binteger {
 
     public Binteger add(Binteger b) {
      
-        System.out.println("COMPARE: " + compare(b, false));
-        if (compare(b, false) != 0 && compare(b, true) > 0) {
+        // TODO: Adding is broken if second number is negative. Potential fix is to perhaps flip negative signs, negative values but make flipSign determine final negative value?
+        int c2 = compare(b, true);
+
+        if (c2 > 0 && (b.isNegative || isNegative)) {
             int[] tval = val;
             boolean tisNegative = isNegative;
             String tasString = asString;
@@ -215,7 +230,12 @@ public class Binteger {
             negative = true;
         }
         else if (!flipSign) {
-            negative = false;
+            if (c2 == 1 && b.compare(new Binteger("0"), false) == -1) {
+                negative = true;
+            }
+            else {
+                negative = false;
+            }
         }
         else {
             negative = true;
@@ -231,4 +251,12 @@ public class Binteger {
         return new Binteger(sum, negative);
     }
 
+    public Binteger subtract(Binteger b) {
+        
+        b.isNegative = !b.isNegative;
+        Binteger x = add(b);
+        b.isNegative  = !b.isNegative;
+        
+        return x;
+    }
 }
