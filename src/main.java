@@ -11,6 +11,9 @@ class Main{
         Binteger z = new Binteger("4025372428371997405");
         Binteger x = new Binteger("-4344936009049315546");
 
+
+        //System.out.println(z.compareTo());
+
         /*
         WORKS:
         small positive, large negative ->
@@ -34,7 +37,7 @@ class Main{
         */
 
         long start = System.currentTimeMillis();
-        for (int i=0; i<1; i++) {
+        for (int i=0; i<1000; i++) {
             z.add(x);
         }
         long end = System.currentTimeMillis();

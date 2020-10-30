@@ -4,10 +4,10 @@ import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 public class Binteger {
     
-    int[] val;
-    boolean isNegative;
-    String asString;
-    String asAbsString;
+    public int[] val;
+    public boolean isNegative;
+    public String asString;
+    public String asAbsString;
 
     public Binteger(String n) {
         asString = n;
@@ -42,7 +42,12 @@ public class Binteger {
         return isNegative;
     }
 
-    public int compare(Binteger b) {
+    private int[] reduce(int[] a) {
+        
+        int start = 0;
+    }
+
+    public int compare(Binteger b, boolean ignoreNegative) {
         
         /* 
             returns 1 if parameter is less
@@ -50,35 +55,53 @@ public class Binteger {
             returns -1 if parameter is greater
         */
 
-        if (val == b.val) {
+        // If false, this checks for literal value
+        // and not absolute value
+        if (!ignoreNegative) {
+            if ((isNegative == b.getIsNegative()) && Arrays.equals(val, b.val)) {
+                return 0;
+            }
+            else if (isNegative != b.getIsNegative()) {
+                 return isNegative ? -1 : 1;
+            }
+        }
+
+        if (Arrays.equals(val, b.val)) {
             return 0;
         }
-        
-        if (val.length > b.val.length) {
+        else if (val.length > b.val.length) {
+            if (!ignoreNegative) {
+                return -1;
+            }
             return 1;
         }
-        else if (1) {
-            
+        else if (val.length < b.val.length)  {
+            if (!ignoreNegative) {
+                return 1;
+            }
+            return -1;
         }
+
+        // If the sizes are the same
+        for (int i=val.length-1; i>=0; i--) {
+            if (val[i] > b.val[i]) {
+                // if one negative is larger than the other
+                return 1;
+            }
+            else if (val[i] < b.val[i]) {
+                return -1;
+            }
+        }
+
+        // backup
+        return 0;
 
     }
 
     public Binteger add(Binteger b) {
+     
 
-        int comparison = asString.compareTo(b.asString);
-        int comparison2 = asAbsString.compareTo(b.asAbsString);
-
-        if (val.hashCode() > b.val.hashCode()) {
-            comparison2 = -1;
-        }
-        else if (val.hashCode() < b.val.hashCode()) {
-            comparison2 = 1;
-        }
-
-        System.out.println("C1: " +comparison + "  C2: " + comparison2);
-        System.out.println("x: " +isNegative + "  z: " + b.isNegative);
-
-        if ((comparison < 0 && comparison2 > 0) || (comparison > 0 && comparison2 > 0)) {
+        if (compare(b, true) > 0) {
             int[] tval = val;
             boolean tisNegative = isNegative;
             String tasString = asString;
@@ -93,7 +116,6 @@ public class Binteger {
             b.isNegative = tisNegative;
             b.asString  = tasString;
             b.asAbsString  = tasAbsString;
-            System.out.println("triggered");
         }
 
         int[] bVal = b.getArray();
@@ -186,8 +208,8 @@ public class Binteger {
             b.isNegative  = !b.isNegative;
         }
 
-        System.out.println(negative);
-        System.out.println(Arrays.toString(sum));
+        //System.out.println("Is Negative: " + negative);
+        //System.out.println(Arrays.toString(sum));
         return new Binteger("-123123");
     }
 
