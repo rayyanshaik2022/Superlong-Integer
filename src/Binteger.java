@@ -35,6 +35,8 @@ public class Binteger {
     }
 
     private String toString(int[] a) {
+
+        System.out.println(Arrays.toString(a));
         
         String finalString = "";
         for (int i = 0; i<a.length; i++) {
@@ -144,12 +146,14 @@ public class Binteger {
         // TODO: Adding is broken if second number is negative. Potential fix is to perhaps flip negative signs, negative values but make flipSign determine final negative value?
         int c2 = compare(b, true);
 
+        int[] BOval = Arrays.copyOf(val, val.length);
+
         if (c2 > 0 && (b.isNegative || isNegative)) {
-            int[] tval = val;
+            int[] tval = Arrays.copyOf(val, val.length);;
             boolean tisNegative = isNegative;
             String tasString = asString;
 
-            val = b.val;
+            val = Arrays.copyOf(b.val, b.val.length);;
             isNegative = b.isNegative;
             asString = b.asString;
 
@@ -254,7 +258,9 @@ public class Binteger {
             b.isNegative  = !b.isNegative;
         }
 
-
+        b.val = BOval;
+        b.asString = null;
+        asString = null;
 
         return new Binteger(sum, negative);
     }
@@ -264,6 +270,7 @@ public class Binteger {
         b.isNegative = !b.isNegative;
         Binteger x = add(b);
         b.isNegative  = !b.isNegative;
+
         
         return x;
     }
