@@ -328,4 +328,18 @@ public class Binteger {
         return x;
 
     }
+
+    public double toDouble(int[] a) {
+        double representation = 0;
+        
+        for (int i=0; i<a.length; i++) {
+            representation += a[i] * Math.pow(10,-i);
+        }
+
+        return representation;
+    }
+
+    public double divide(Binteger b) {
+        return 1.0;
+    }
 }
