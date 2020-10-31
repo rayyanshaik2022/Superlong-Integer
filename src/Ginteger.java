@@ -2,14 +2,16 @@ import java.util.Arrays;
 
 public class Ginteger {
     public static void main(String[] args) {
-        Ginteger a = new Ginteger("-171025741238245299");
-        Ginteger b = new Ginteger("4243255923305278906");
+        Ginteger a = new Ginteger("4938224890876513426");
+        Ginteger b = new Ginteger("6485117280682360484");
 
         long start = System.currentTimeMillis();
         System.out.println(Arrays.toString(a.chunks));
         System.out.println(Arrays.toString(b.chunks));
         for (int i=0; i<1; i++) {
-            a.multiply(a.chunks, b.chunks);
+            System.out.println(Arrays.toString(a.multiply(a.chunks, b.chunks)));
+            //a.subtract(a.chunks, b.chunks);
+            
         }
         long end = System.currentTimeMillis();
         System.out.println("ms: " + (end-start));
@@ -186,7 +188,6 @@ public class Ginteger {
                 tempSum += carry;
 
                 if (tempSum > 999999999) {
-                    System.out.println("never trig");
                     carry = (tempSum - (tempSum % 1000000000))/1000000000;
                     tempSum = tempSum % 1000000000;
                 }
@@ -207,15 +208,65 @@ public class Ginteger {
         
         return format(sum);
     }
-    
-    public void multiply(long[] a, long[] b) {
-        int[][] matrix = new int[6][6];
 
+    public long[] subtract(long a[], long[] b) {
+        long[] copy = b.clone();
+        copy[0] = b[0] * -1;
+
+        return add(a, copy);
+    }
+
+    public long[] simpleMultiply(long[] a, long b, int place) {
         long[] product = new long[6];
 
-        for (int i=5; i>= 1; i--) {
-            product[i] = a[i] * b[i];
-            System.out.println(product[i]);
+        long carry = 0;
+        long mult;
+        for (int i=5; i>=1; i--) {
+            mult = (a[i] * b) + carry;
+
+            if (mult > 999999999) {
+                carry = (mult - (mult%1000000000))/1000000000;
+                mult = mult%1000000000;
+            }
+            else {
+                carry = 0;
+            }
+            
+            if (i-place > 0) {
+                product[i-place] = mult;
+            }
+            
         }
+        if (carry % 1000000000 == 0 && carry != 0) {
+            product[place-1] = carry/1000000000;
+        }
+        else if (carry != 0) {
+            product[place-1] = carry % 1000000000;
+        }
+
+        return product;
+    }
+    
+    public long[] multiply(long[] a, long[] b) {
+        long[][] matrix = new long[6][6];
+        long[] product = new long[6];
+        long sign;
+
+        for (int i=5; i>=1; i--) {
+            matrix[i] = simpleMultiply(a, b[i], 5-i);
+        }
+        for (int i=0; i<6; i++) {
+            product = add(product, matrix[i]);
+        }
+
+        if (a[0] == b[0]) {
+            sign = 1;
+        }
+        else {
+            sign = -1;
+        }
+
+        product[0] = sign;
+        return product;
     }
 }
