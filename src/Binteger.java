@@ -1,3 +1,4 @@
+
 import java.util.Arrays;
 
 
@@ -143,6 +144,7 @@ public class Binteger {
 
     public Binteger add(Binteger b) {
      
+        // TODO: Adding is broken if second number is negative. Potential fix is to perhaps flip negative signs, negative values but make flipSign determine final negative value?
         int c2 = compare(b, true);
 
         int[] BOval = Arrays.copyOf(val, val.length);
@@ -338,7 +340,68 @@ public class Binteger {
         return representation;
     }
 
-    public double divide(Binteger b) {
-        return 1.0;
+    public Binteger divide(Binteger b) {
+        double bVal = toDouble(b.getArray());
+        double aVal = toDouble(val);
+        double sum = 0;
+        
+        
+        
+
+
+        if(bVal > aVal){
+            sum =  0.0;
+        }
+        else if(bVal < aVal && b.getArray().length == val.length){
+            sum = Math.round(aVal/bVal);
+        }
+        else if(bVal < aVal && b.getArray().length != val.length){
+            int periodIndex = 0;
+            int[] x = new int[val.length];
+            int difference = Math.abs(b.getArray().length - val.length);
+            sum = aVal/bVal;
+            int k = 0;
+            String y = Double.toString(sum);
+            for(int i = 0; i < y.length() ; i++){
+                if(y.charAt(i) != '.'){
+                    x[i] = Integer.parseInt(String.valueOf(y.charAt(i)));
+                }
+                else{
+                    periodIndex = i;
+                    x[i] = 10;
+                }
+            }
+            for(int i = periodIndex; i < y.length(); i++){
+
+                if(i - periodIndex == difference){
+                    break;
+                }
+                if(x[i] == 10){
+                    k = x[i];
+                    x[i] = x[i+1];
+                    x[i+1] = k;
+                }
+            }
+            String quotient = "";
+            for(int i = 0; i < y.length(); i++){
+                if(x[i] < 10){
+                    quotient += Integer.toString(x[i]);
+                }
+                else if(x[i] == 10){
+                    quotient += ".";
+                }
+                
+
+            }
+        return new Binteger(quotient);
+        }
+        else{
+            sum =  1.0;
+        }
+
+        return new Binteger(Double.toString(sum));
+
+        
     }
+ 
 }
