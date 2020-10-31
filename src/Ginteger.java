@@ -2,15 +2,14 @@ import java.util.Arrays;
 
 public class Ginteger {
     public static void main(String[] args) {
-        Ginteger a = new Ginteger("4938224890876513426");
-        Ginteger b = new Ginteger("6485117280682360484");
+        Ginteger a = new Ginteger("-1855993274344235950");
+        Ginteger copy = new Ginteger("-1");
+        Ginteger b = new Ginteger("-1");
 
         long start = System.currentTimeMillis();
-        System.out.println(Arrays.toString(a.chunks));
-        System.out.println(Arrays.toString(b.chunks));
-        for (int i=0; i<1; i++) {
-            System.out.println(Arrays.toString(a.multiply(a.chunks, b.chunks)));
-            //a.subtract(a.chunks, b.chunks);
+        for (int i=0; i<1000000; i++) {
+            a.multiply(b);
+            //System.out.println(a);
             
         }
         long end = System.currentTimeMillis();
@@ -58,7 +57,36 @@ public class Ginteger {
         //TODO toString here?
     }
 
-    public long[] format(long[] a) {
+    public String toString() {
+        String val = "";
+        for (int i = 5; i>=1; i--) {
+            if (this.chunks[i] == 0) {
+                continue;
+            }
+            val = this.chunks[i] + val;
+        }
+        if (this.chunks[0] == -1) {
+            val = "-" + val;
+        }
+        return val;
+    }
+
+    public Ginteger add(Ginteger b) {
+        this.chunks = rawAdd(this.chunks, b.chunks);
+        return this;
+    }
+
+    public Ginteger subtract(Ginteger b) {
+        this.chunks = rawSubtract(this.chunks, b.chunks);
+        return this;
+    }
+
+    public Ginteger multiply(Ginteger b) {
+        this.chunks = rawMultiply(this.chunks, b.chunks);
+        return this;
+    }
+
+    private long[] format(long[] a) {
         long[] reformatted = new long[6];
 
         reformatted[0] = a[0];
@@ -69,7 +97,7 @@ public class Ginteger {
 
         return reformatted;
     }
-    public int compare(long[] a, long[] b, boolean abs) {
+    private int compare(long[] a, long[] b, boolean abs) {
         // Starts at 1 to skip the sign value
         if (Arrays.equals(a, b)) {
             return 0;
@@ -115,8 +143,8 @@ public class Ginteger {
         
         return 0;
     }
-    
-    public long[] add(long[] a, long[] b) {
+
+    private long[] rawAdd(long[] a, long[] b) {
         long[] sum = new long[6];
 
         long tempSum;
@@ -142,6 +170,7 @@ public class Ginteger {
                 tempSum = 0;
 
             }
+            sum[0] = a[0];
         }
 
         else if (compare(a, b, true) != compare(a, b, false)) {
@@ -209,14 +238,14 @@ public class Ginteger {
         return format(sum);
     }
 
-    public long[] subtract(long a[], long[] b) {
+    private long[] rawSubtract(long a[], long[] b) {
         long[] copy = b.clone();
         copy[0] = b[0] * -1;
 
-        return add(a, copy);
+        return rawAdd(a, copy);
     }
 
-    public long[] simpleMultiply(long[] a, long b, int place) {
+    private long[] simpleMultiply(long[] a, long b, int place) {
         long[] product = new long[6];
 
         long carry = 0;
@@ -247,7 +276,7 @@ public class Ginteger {
         return product;
     }
     
-    public long[] multiply(long[] a, long[] b) {
+    private long[] rawMultiply(long[] a, long[] b) {
         long[][] matrix = new long[6][6];
         long[] product = new long[6];
         long sign;
@@ -256,7 +285,7 @@ public class Ginteger {
             matrix[i] = simpleMultiply(a, b[i], 5-i);
         }
         for (int i=0; i<6; i++) {
-            product = add(product, matrix[i]);
+            product = rawAdd(product, matrix[i]);
         }
 
         if (a[0] == b[0]) {
