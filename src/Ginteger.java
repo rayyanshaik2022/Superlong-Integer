@@ -1,21 +1,20 @@
 import java.util.Arrays;
+import java.math.BigInteger;
 
 public class Ginteger {
     public static void main(String[] args) {
-        Ginteger a = new Ginteger("-1855993274344235950");
-        Ginteger copy = new Ginteger("-1");
-        Ginteger b = new Ginteger("-1");
+        Ginteger a = new Ginteger("1065880738774695472");
+        //Ginteger copy = new Ginteger("1000");
+        Ginteger b = new Ginteger("4621467277654520847");
 
         long start = System.currentTimeMillis();
-        for (int i=0; i<1000000; i++) {
-            a.multiply(b);
-            //System.out.println(a);
-            
+        System.out.println("Dividing: " + 1000000);
+        for (int i=0; i<1; i++) {
+            System.out.println(a.subtract(b));
         }
         long end = System.currentTimeMillis();
         System.out.println("ms: " + (end-start));
 
-        
     }
 
     long[] chunks = new long[6];
@@ -54,7 +53,6 @@ public class Ginteger {
     }
     public Ginteger(long[] a) {
         chunks = a;
-        //TODO toString here?
     }
 
     public String toString() {
@@ -72,18 +70,27 @@ public class Ginteger {
     }
 
     public Ginteger add(Ginteger b) {
-        this.chunks = rawAdd(this.chunks, b.chunks);
-        return this;
+        return new Ginteger(rawAdd(this.chunks, b.chunks));
     }
 
     public Ginteger subtract(Ginteger b) {
-        this.chunks = rawSubtract(this.chunks, b.chunks);
-        return this;
+        return new Ginteger(rawSubtract(this.chunks, b.chunks));
     }
 
     public Ginteger multiply(Ginteger b) {
-        this.chunks = rawMultiply(this.chunks, b.chunks);
-        return this;
+        return new Ginteger(rawMultiply(this.chunks, b.chunks));
+    }
+
+    public int divide(Ginteger b) {
+        long[] p = this.chunks.clone();
+        long[] q = b.chunks.clone();
+        p[0] = -1;
+        q[0] = -1;
+        int quotient = (int)Double.parseDouble(rawDivide(p, q));
+
+        // TODO Fix dvision. Due to parsing it to a double and such, division with very large quotients
+        // will not work as they will reach integer limit, etc
+        return quotient * (int)(this.chunks[0] * b.chunks[0]);
     }
 
     private long[] format(long[] a) {
@@ -97,6 +104,7 @@ public class Ginteger {
 
         return reformatted;
     }
+    
     private int compare(long[] a, long[] b, boolean abs) {
         // Starts at 1 to skip the sign value
         if (Arrays.equals(a, b)) {
@@ -174,7 +182,6 @@ public class Ginteger {
         }
 
         else if (compare(a, b, true) != compare(a, b, false)) {
-            
             for (int i=sum.length-1; i>=1; i--) {
 
                 tempSum = (a[i]*a[0]) + (b[i]*b[0]);
@@ -195,7 +202,6 @@ public class Ginteger {
                 }
 
                 if ((tempSum) < 0){
-                    System.out.println(tempSum + " " +carry);
                 }
                 
                 sum[i] = tempSum;
@@ -204,6 +210,9 @@ public class Ginteger {
             }
 
             if (sum[sum.length-1] < 0) {
+                sum[0] = 1;
+            }
+            else {
                 sum[0] = -1;
             }
             
@@ -298,4 +307,76 @@ public class Ginteger {
         product[0] = sign;
         return product;
     }
+
+    private double toDouble(long[] a) {
+        double representation = 0;
+        
+        for (int i=5; i>=1; i--) {
+            if (a[i] != 0) {
+                representation += a[i] * Math.pow(10,-(i*9));
+            }   
+        }
+        return representation * a[0];
+    }
+
+    private String rawDivide(long[] a, long[] b) {
+        double aDouble = toDouble(a);
+        double bDouble = toDouble(b);
+
+        double sum = 0;
+
+        if(bDouble < aDouble){
+            sum =  0.0;
+        }
+        else if(bDouble > aDouble && b.length == a.length){
+            sum = Math.floor(aDouble/bDouble);
+        }
+        else if(bDouble > aDouble && b.length != a.length){
+            int periodIndex = 0;
+            int[] x = new int[a.length];
+            int difference = Math.abs(b.length - a.length);
+            sum = aDouble/bDouble;
+            int k = 0;
+            String y = Double.toString(sum);
+            for(int i = 0; i < y.length() ; i++){
+                if(y.charAt(i) != '.'){
+                    x[i] = Integer.parseInt(String.valueOf(y.charAt(i)));
+                }
+                else{
+                    periodIndex = i;
+                    x[i] = 10;
+                }
+            }
+            for(int i = periodIndex; i < y.length(); i++){
+
+                if(i - periodIndex == difference){
+                    break;
+                }
+                if(x[i] == 10){
+                    k = x[i];
+                    x[i] = x[i+1];
+                    x[i+1] = k;
+                }
+            }
+            String quotient = "";
+            for(int i = 0; i < y.length(); i++){
+                if(x[i] < 10){
+                    quotient += Integer.toString(x[i]);
+                }
+                else if(x[i] == 10){
+                    quotient += ".";
+                }
+                
+
+            }
+        return quotient;
+        }
+        else{
+            sum =  1.0;
+        }
+
+        return Double.toString(sum);
+
+    }
+
 }
