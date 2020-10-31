@@ -2,17 +2,17 @@ import java.util.Arrays;
 
 public class Ginteger {
     public static void main(String[] args) {
-        Ginteger a = new Ginteger("-4475415898249202558");
-        Ginteger b = new Ginteger("5570207363899646880");
+        Ginteger a = new Ginteger("-171025741238245299");
+        Ginteger b = new Ginteger("4243255923305278906");
 
         long start = System.currentTimeMillis();
+        System.out.println(Arrays.toString(a.chunks));
+        System.out.println(Arrays.toString(b.chunks));
         for (int i=0; i<1; i++) {
-            a.add(a.chunks, b.chunks);
+            a.multiply(a.chunks, b.chunks);
         }
         long end = System.currentTimeMillis();
         System.out.println("ms: " + (end-start));
-
-        System.out.println(a.compare(a.chunks, b.chunks, false));
 
         
     }
@@ -56,6 +56,17 @@ public class Ginteger {
         //TODO toString here?
     }
 
+    public long[] format(long[] a) {
+        long[] reformatted = new long[6];
+
+        reformatted[0] = a[0];
+
+        for (int i=1; i<6; i++) {
+            reformatted[i] = Math.abs(a[i]);
+        }
+
+        return reformatted;
+    }
     public int compare(long[] a, long[] b, boolean abs) {
         // Starts at 1 to skip the sign value
         if (Arrays.equals(a, b)) {
@@ -102,7 +113,8 @@ public class Ginteger {
         
         return 0;
     }
-    public void add(long[] a, long[] b) {
+    
+    public long[] add(long[] a, long[] b) {
         long[] sum = new long[6];
 
         long tempSum;
@@ -130,7 +142,6 @@ public class Ginteger {
             }
         }
 
-        // Only works if the abs() larger one is subtracting
         else if (compare(a, b, true) != compare(a, b, false)) {
             
             for (int i=sum.length-1; i>=1; i--) {
@@ -160,6 +171,11 @@ public class Ginteger {
                 tempSum = 0;
 
             }
+
+            if (sum[sum.length-1] < 0) {
+                sum[0] = -1;
+            }
+            
         }
         else {
 
@@ -183,9 +199,23 @@ public class Ginteger {
 
             }
 
+            if (sum[sum.length-1] < 0) {
+                sum[0] = 1;
+            }
+
         }
-        System.out.println(Arrays.toString(sum));
+        
+        return format(sum);
     }
+    
+    public void multiply(long[] a, long[] b) {
+        int[][] matrix = new int[6][6];
 
+        long[] product = new long[6];
 
+        for (int i=5; i>= 1; i--) {
+            product[i] = a[i] * b[i];
+            System.out.println(product[i]);
+        }
+    }
 }
