@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Ginteger",
+            "request": "launch",
+            "mainClass": "Ginteger",
+            "projectName": "Superlong-Integer_117d5d7d"
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
             "mainClass": "${file}"

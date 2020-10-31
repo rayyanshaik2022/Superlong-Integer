@@ -126,3 +126,38 @@ public class SuperLong {
     }
 
 }
+
+
+
+/*abstract
+else {
+
+            // -4025372428 371997405
+            //  4344936009 049315546
+            
+            System.out.println("triggered");
+            for (int i=sum.length-1; i>=1; i--) {
+
+                tempSum = (a[i]*a[0]) + (b[i]*b[0]);
+
+                if (Math.abs(tempSum) > 999999999) {
+
+                    carry = (tempSum - (tempSum % 1000000000))/1000000000;
+                    tempSum = tempSum % 1000000;
+                }
+                else {
+                    carry = 0;
+                }
+
+                if ((tempSum) < 0){
+                    tempSum += + 1000000000;
+                }
+                
+                sum[i] = tempSum;
+                tempSum = 0;
+
+            }
+        }
+        System.out.println(Arrays.toString(sum));
+    }
+*/

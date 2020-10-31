@@ -10,10 +10,13 @@ class Main{
         
         Binteger z = new Binteger("4025372428371997405");
         Binteger x = new Binteger("4344936009049315546");
+        long q;
 
         long start = System.currentTimeMillis();
         for (int i=0; i<1000000; i++) {
-            z.multiply(x);
+
+            z.add(x);
+            //z.multiply(x);
             //System.out.println(l.toString());
         }
         long end = System.currentTimeMillis();

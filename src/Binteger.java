@@ -143,7 +143,6 @@ public class Binteger {
 
     public Binteger add(Binteger b) {
      
-        // TODO: Adding is broken if second number is negative. Potential fix is to perhaps flip negative signs, negative values but make flipSign determine final negative value?
         int c2 = compare(b, true);
 
         int[] BOval = Arrays.copyOf(val, val.length);
