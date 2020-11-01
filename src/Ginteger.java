@@ -394,7 +394,9 @@ public class Ginteger {
         /*
         Converts a long array into a
         double. there is loss of precision
-        when exceeding max double value */
+        when exceeding max double value 
+        represents a number such as 42358763784 as 4.2358763784
+        */
         double representation = 0;
         
         for (int i=5; i>=1; i--) {
@@ -409,52 +411,56 @@ public class Ginteger {
         /*
         Division! However there is some precision loss
         due to the fact that the array are converted
-        into doubles */
+        into doubles 
+        Since the double is the number that is inputed as string, but just the decimal values
+        instead of 456, 4.56, we can just use the division operater in java and then get rid of the 
+        . depending on the situation.
+        */
 
         double aDouble = Math.abs(toDouble(a))*-1;
         double bDouble = Math.abs(toDouble(b))*-1;
 
         double sum = 0;
 
-        if(bDouble < aDouble){
+        if(bDouble < aDouble){ // if the first number is less than the seconds the output will always be 0
             sum =  0.0;
         }
-        else if(bDouble > aDouble && b.length == a.length){
+        else if(bDouble > aDouble && b.length == a.length){ // this is for a case, if the first number is greater than the second and the lengths are the same meaning the output will be very small
             sum = Math.floor(aDouble/bDouble);
         }
-        else if(bDouble > aDouble && b.length != a.length){
-            int periodIndex = 0;
-            int[] x = new int[a.length];
-            int difference = Math.abs(b.length - a.length);
+        else if(bDouble > aDouble && b.length != a.length){ // this is for a case, if the first number is greater than the second, but lengths are not the same meaning the output will be larger than 10
+            int periodIndex = 0; // point in the string where the '.' is 
+            int[] x = new int[a.length]; // array of all the numbers in the string
+            int difference = Math.abs(b.length - a.length); // the difference in size between the 2 numbers, the difference for 345 and 3 would be 2
             sum = aDouble/bDouble;
             int k = 0;
             String y = Double.toString(sum);
-            for(int i = 0; i < y.length() ; i++){
-                if(y.charAt(i) != '.'){
+            for(int i = 0; i < y.length() ; i++){ // adding the values of the string into the array
+                if(y.charAt(i) != '.'){ // if it is not a '.' add the numbers
                     x[i] = Integer.parseInt(String.valueOf(y.charAt(i)));
                 }
-                else{
+                else{ // if it is a '.' add a number that we can diffentiate from the other numbers, such as any number >= 10
                     periodIndex = i;
                     x[i] = 10;
                 }
             }
-            for(int i = periodIndex; i < y.length(); i++){
+            for(int i = periodIndex; i < y.length(); i++){ // moveing the period over by the amount of difference
 
-                if(i - periodIndex == difference){
+                if(i - periodIndex == difference){ 
                     break;
                 }
-                if(x[i] == 10){
+                if(x[i] == 10){ // if the number is 10, if it is the period, move the period over to the right one
                     k = x[i];
                     x[i] = x[i+1];
                     x[i+1] = k;
                 }
             }
             String quotient = "";
-            for(int i = 0; i < y.length(); i++){
+            for(int i = 0; i < y.length(); i++){ //adding the array back into a string
                 if(x[i] < 10){
                     quotient += Integer.toString(x[i]);
                 }
-                else if(x[i] == 10){
+                else if(x[i] == 10){ // change the differentiating value back to a '.'
                     quotient += ".";
                 }
                 
@@ -462,11 +468,11 @@ public class Ginteger {
             }
         return quotient;
         }
-        else{
+        else{ // if the numbers are the same the return will always be 1
             sum =  1.0;
         }
 
-        return Double.toString(sum);
+        return Double.toString(sum); // return the string of the sum we had figured out
 
     }
 
