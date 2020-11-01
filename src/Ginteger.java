@@ -1,69 +1,75 @@
 import java.util.Arrays;
+
+import javax.swing.plaf.synth.SynthOptionPaneUI;
+
 import java.math.BigInteger;
 
 public class Ginteger {
+    
     public static void main(String[] args) {
-        Ginteger a = new Ginteger("2617240171759825033");
-        Ginteger b = new Ginteger("219811953138254038");
+        Ginteger a = new Ginteger("5816943576806717091");
+        Ginteger b = new Ginteger("-3866887495653167062");
 
         long start = System.currentTimeMillis();
         for (int i=0; i<1000000; i++) {
-            //System.out.println(a.modulo(b));
-            a.divide(b);
+            //System.out.println(a.add(b));
+            a.add(b);
             
         }
         long end = System.currentTimeMillis();
         System.out.println("ms: " + (end-start));
-
     }
-
     long[] chunks = new long[6];
-
     public Ginteger(String n) {
-
-        // Account for if the string is in scientific notation
-        if (n.contains(".")) {
-            if (n.contains("E")) {
-                n = n.replace(".", "");
-                int tenCount = Integer.parseInt(n.substring(n.indexOf("E")+1));
-                n = n.substring(0, n.indexOf("E")) + "0".repeat(tenCount);
+        try{
+            // Account for if the string is in scientific notation
+            if (n.contains(".")) {
+                if (n.contains("E")) {
+                    n = n.replace(".", "");
+                    int tenCount = Integer.parseInt(n.substring(n.indexOf("E")+1));
+                    n = n.substring(0, n.indexOf("E")) + "0".repeat(tenCount);
+                }
+                else if (n.contains(".")) {
+                    n = n.substring(0, n.indexOf("."));
+                }
             }
-            else if (n.contains(".")) {
-                n = n.substring(0, n.indexOf("."));
+
+            // Determine the sign value
+            /* The first value of the chunk array
+            is left to determine if a number if 
+            negative or positive. This is represented
+            as 1 or -1 */
+            if (n.charAt(0) == '-') {
+                chunks[0] = -1;
+                n = n.substring(1);
+            }
+            else {
+                chunks[0] = 1;
+            }
+
+            // Split the number up into the array by 9 digits at a time
+            int counter = 0;
+            int arraycounter = 0;
+            for (int i=n.length()-1; i>=0; i--) {
+                if (counter == 9) {
+
+                    // chunks[5-arraycounter] -> 5 is the last index of chunks
+                    chunks[5-arraycounter] = Long.parseLong(n.substring(i+1,i+10));
+
+                    arraycounter++;
+                    counter = 0;
+                }
+                counter ++;
+            }
+
+            if (counter != 0 && arraycounter != 5) {
+                chunks[5-arraycounter] = Long.parseLong(n.substring(0,counter));
             }
         }
-
-        // Determine the sign value
-        /* The first value of the chunk array
-        is left to determine if a number if 
-        negative or positive. This is represented
-        as 1 or -1 */
-        if (n.charAt(0) == '-') {
-            chunks[0] = -1;
-            n = n.substring(1);
+        catch(Exception e) {
+            System.out.println("Ginteger Overflowed!");
         }
-        else {
-            chunks[0] = 1;
-        }
-
-        // Split the number up into the array by 9 digits at a time
-        int counter = 0;
-        int arraycounter = 0;
-        for (int i=n.length()-1; i>=0; i--) {
-            if (counter == 9) {
-
-                // chunks[5-arraycounter] -> 5 is the last index of chunks
-                chunks[5-arraycounter] = Long.parseLong(n.substring(i+1,i+10));
-
-                arraycounter++;
-                counter = 0;
-            }
-            counter ++;
-        }
-
-        if (counter != 0 && arraycounter != 5) {
-            chunks[5-arraycounter] = Long.parseLong(n.substring(0,counter));
-        }
+        
     }
     public Ginteger(long[] a) {
         chunks = a;
@@ -103,14 +109,14 @@ public class Ginteger {
     }
 
     public Ginteger divide(Ginteger b) {
-        long[] p = this.chunks.clone();
+       /* long[] p = this.chunks.clone();
         long[] q = b.chunks.clone();
 
         // Sets both sign bits to negative
         p[0] = -1;
-        q[0] = -1;
+        q[0] = -1; */
 
-        Ginteger quotient = new Ginteger(rawDivide(p, q));
+        Ginteger quotient = new Ginteger(rawDivide(this.chunks, b.chunks));
         quotient.chunks[0] = this.chunks[0] * b.chunks[0];
 
         return quotient;
@@ -263,16 +269,32 @@ public class Ginteger {
 
             }
 
-            if (sum[sum.length-1] < 0) {
+            if (compare(a, b, true) > 0 && b[0] == -1) {
                 sum[0] = 1;
             }
             else {
                 sum[0] = -1;
             }
+
+            /*
+            if (sum[sum.length-1] < 0) {
+                sum[0] = 1;
+            }
+            else {
+                sum[0] = -1;
+            } */
             
         }
         else {
+            long[] aCopy = a.clone();
+            long[] bCopy = b.clone();
 
+            aCopy[0] = aCopy[0] *-1;
+            bCopy[0] = bCopy[0] *-1;
+
+            sum = rawAdd(bCopy, aCopy);
+            sum[0] = sum[0] *-1;
+            /*
             // i>=1 because we do not want to include first index (sign value)
             for (int i=sum.length-1; i>=1; i--) {
 
@@ -284,6 +306,7 @@ public class Ginteger {
                     tempSum = tempSum % 1000000000;
                 }
                 else {
+                    
                     carry = 0;
                 }
                 
@@ -294,7 +317,7 @@ public class Ginteger {
 
             if (sum[sum.length-1] < 0) {
                 sum[0] = 1;
-            }
+            } */
 
         }
         
@@ -339,7 +362,13 @@ public class Ginteger {
             product[place-1] = carry/1000000000;
         }
         else if (carry != 0) {
-            product[place-1] = carry % 1000000000;
+            try {
+                product[place-1] = carry % 1000000000;
+            }
+            catch (Exception e) {
+                System.out.println("Carry overflow...");
+            }
+            
         }
 
         return product;
@@ -372,7 +401,7 @@ public class Ginteger {
 
     private double toDouble(long[] a) {
         /*
-        Converts an integer array into a
+        Converts a long array into a
         double. there is loss of precision
         when exceeding max double value */
         double representation = 0;
@@ -386,8 +415,8 @@ public class Ginteger {
     }
 
     private String rawDivide(long[] a, long[] b) {
-        double aDouble = toDouble(a);
-        double bDouble = toDouble(b);
+        double aDouble = Math.abs(toDouble(a))*-1;
+        double bDouble = Math.abs(toDouble(b))*-1;
 
         double sum = 0;
 
