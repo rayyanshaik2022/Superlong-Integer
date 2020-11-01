@@ -33,7 +33,11 @@ public class Ginteger {
             }
         }
 
-
+        // Determine the sign value
+        /* The first value of the chunk array
+        is left to determine if a number if 
+        negative or positive. This is represented
+        as 1 or -1 */
         if (n.charAt(0) == '-') {
             chunks[0] = -1;
             n = n.substring(1);
@@ -42,6 +46,7 @@ public class Ginteger {
             chunks[0] = 1;
         }
 
+        // Split the number up into the array by 9 digits at a time
         int counter = 0;
         int arraycounter = 0;
         for (int i=n.length()-1; i>=0; i--) {
@@ -66,6 +71,7 @@ public class Ginteger {
 
     public String toString() {
         String val = "";
+        // Appends the chunk to the final string
         for (int i = 5; i>=1; i--) {
             if (this.chunks[i] == 0) {
                 continue;
@@ -99,6 +105,8 @@ public class Ginteger {
     public Ginteger divide(Ginteger b) {
         long[] p = this.chunks.clone();
         long[] q = b.chunks.clone();
+
+        // Sets both sign bits to negative
         p[0] = -1;
         q[0] = -1;
 
@@ -117,6 +125,11 @@ public class Ginteger {
     }
 
     private long[] format(long[] a) {
+        /*
+        Removes unecessary negative values
+        within the chunk array
+        */
+
         long[] reformatted = new long[6];
 
         reformatted[0] = a[0];
@@ -129,6 +142,16 @@ public class Ginteger {
     }
     
     private int compare(long[] a, long[] b, boolean abs) {
+        /*
+        Compares 2 arrays.
+        Returns 0 if the arrays are equal.
+        Returns 1 if 'a' is greater then 'b'
+        Returns -1 if 'a' is less than b'
+
+        if abs, then the sign bit will not be
+        taken into account 
+        */
+
         // Starts at 1 to skip the sign value
         if (Arrays.equals(a, b)) {
             return 0;
@@ -189,6 +212,7 @@ public class Ginteger {
                 tempSum = a[i] + b[i];
                 tempSum += carry;
 
+                // If exceeding chunk digit value, then carry
                 if (tempSum > 999999999) {
                     carry = (tempSum - (tempSum % 1000000000))/1000000000;
                     tempSum = tempSum % 1000000000;
@@ -204,6 +228,13 @@ public class Ginteger {
             sum[0] = a[0];
         }
 
+        /* This else if statement and the follows else statement
+            help catch for if the larger value number is "on top" or
+            "on bottom", as well as what operator it is using
+            (sign value). Depending on the sign value, the method of
+            carrying changes (such as subtraction carrying != addition
+            carrying)
+        */
         else if (compare(a, b, true) != compare(a, b, false)) {
             for (int i=sum.length-1; i>=1; i--) {
 
@@ -278,6 +309,12 @@ public class Ginteger {
     }
 
     private long[] simpleMultiply(long[] a, long b, int place) {
+        /*
+        Multiplies an array by a single long value.
+        Also accounts the "place" which would be
+        the value's position in an Array of chunks.
+        */
+        
         long[] product = new long[6];
 
         long carry = 0;
@@ -313,9 +350,11 @@ public class Ginteger {
         long[] product = new long[6];
         long sign;
 
+        // Multiplies 'this' chunk array by all indivudal chunks in b
         for (int i=5; i>=1; i--) {
             matrix[i] = simpleMultiply(a, b[i], 5-i);
         }
+        // Adds all the products of the prior calculations together
         for (int i=0; i<6; i++) {
             product = rawAdd(product, matrix[i]);
         }
@@ -332,6 +371,10 @@ public class Ginteger {
     }
 
     private double toDouble(long[] a) {
+        /*
+        Converts an integer array into a
+        double. there is loss of precision
+        when exceeding max double value */
         double representation = 0;
         
         for (int i=5; i>=1; i--) {
