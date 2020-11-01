@@ -95,12 +95,6 @@ public class Ginteger {
     }
 
     public Ginteger divide(Ginteger b) {
-       /* long[] p = this.chunks.clone();
-        long[] q = b.chunks.clone();
-
-        // Sets both sign bits to negative
-        p[0] = -1;
-        q[0] = -1; */
 
         Ginteger quotient = new Ginteger(rawDivide(this.chunks, b.chunks));
         quotient.chunks[0] = this.chunks[0] * b.chunks[0];
@@ -109,6 +103,12 @@ public class Ginteger {
     }
 
     public Ginteger modulo(Ginteger b) {
+        /* 
+        There may be precision loss
+        due to the fact that divide() is called
+        (which has the potential for precision loss)
+        */
+        
         Ginteger quotient = divide(b);
     
         Ginteger remainder = subtract(new Ginteger(rawMultiply(b.chunks, quotient.chunks)));
@@ -406,6 +406,11 @@ public class Ginteger {
     }
 
     private String rawDivide(long[] a, long[] b) {
+        /*
+        Division! However there is some precision loss
+        due to the fact that the array are converted
+        into doubles */
+
         double aDouble = Math.abs(toDouble(a))*-1;
         double bDouble = Math.abs(toDouble(b))*-1;
 
