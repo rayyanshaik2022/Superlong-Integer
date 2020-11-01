@@ -286,28 +286,28 @@ public class Ginteger {
             
         }
         else {
-            long[] aCopy = a.clone();
-            long[] bCopy = b.clone();
-
-            aCopy[0] = aCopy[0] *-1;
-            bCopy[0] = bCopy[0] *-1;
-
-            sum = rawAdd(bCopy, aCopy);
-            sum[0] = sum[0] *-1;
-            /*
-            // i>=1 because we do not want to include first index (sign value)
+            a[0] = a[0] *-1;
+            b[0] = b[0] *-1;
             for (int i=sum.length-1; i>=1; i--) {
 
-                tempSum = a[i] - b[i];
+                tempSum = (a[i]*a[0]) + (b[i]*b[0]);
                 tempSum += carry;
 
-                if (tempSum > 999999999) {
+                if (Math.abs(tempSum) < 999999999) {
+
                     carry = (tempSum - (tempSum % 1000000000))/1000000000;
                     tempSum = tempSum % 1000000000;
+                    if (tempSum > 0) {
+                        
+                        tempSum = 1000000000 - tempSum;
+                        carry += 1;
+                    }
                 }
                 else {
-                    
                     carry = 0;
+                }
+
+                if ((tempSum) < 0){
                 }
                 
                 sum[i] = tempSum;
@@ -315,10 +315,15 @@ public class Ginteger {
 
             }
 
-            if (sum[sum.length-1] < 0) {
+            if (compare(a, b, true) > 0 && b[0] == -1) {
+                sum[0] = -1;
+            }
+            else {
                 sum[0] = 1;
-            } */
-
+            }
+            
+            a[0] = a[0] *-1;
+            b[0] = b[0] *-1;
         }
         
         return format(sum);
