@@ -3,14 +3,14 @@ import java.math.BigInteger;
 
 public class Ginteger {
     public static void main(String[] args) {
-        Ginteger a = new Ginteger("1065880738774695472");
-        //Ginteger copy = new Ginteger("1000");
-        Ginteger b = new Ginteger("4621467277654520847");
+        Ginteger a = new Ginteger("2617240171759825033");
+        Ginteger b = new Ginteger("219811953138254038");
 
         long start = System.currentTimeMillis();
-        System.out.println("Dividing: " + 1000000);
-        for (int i=0; i<1; i++) {
-            System.out.println(a.subtract(b));
+        for (int i=0; i<1000000; i++) {
+            //System.out.println(a.modulo(b));
+            a.divide(b);
+            
         }
         long end = System.currentTimeMillis();
         System.out.println("ms: " + (end-start));
@@ -18,11 +18,21 @@ public class Ginteger {
     }
 
     long[] chunks = new long[6];
-    String chunkString = null;
 
     public Ginteger(String n) {
 
-        chunkString  = n;
+        // Account for if the string is in scientific notation
+        if (n.contains(".")) {
+            if (n.contains("E")) {
+                n = n.replace(".", "");
+                int tenCount = Integer.parseInt(n.substring(n.indexOf("E")+1));
+                n = n.substring(0, n.indexOf("E")) + "0".repeat(tenCount);
+            }
+            else if (n.contains(".")) {
+                n = n.substring(0, n.indexOf("."));
+            }
+        }
+
 
         if (n.charAt(0) == '-') {
             chunks[0] = -1;
@@ -49,7 +59,6 @@ public class Ginteger {
         if (counter != 0 && arraycounter != 5) {
             chunks[5-arraycounter] = Long.parseLong(n.substring(0,counter));
         }
-
     }
     public Ginteger(long[] a) {
         chunks = a;
@@ -66,6 +75,12 @@ public class Ginteger {
         if (this.chunks[0] == -1) {
             val = "-" + val;
         }
+        if (val.equals("-")) {
+            return "0";
+        }
+        else if (val.equals("")) {
+            return "0";
+        }
         return val;
     }
 
@@ -81,16 +96,24 @@ public class Ginteger {
         return new Ginteger(rawMultiply(this.chunks, b.chunks));
     }
 
-    public int divide(Ginteger b) {
+    public Ginteger divide(Ginteger b) {
         long[] p = this.chunks.clone();
         long[] q = b.chunks.clone();
         p[0] = -1;
         q[0] = -1;
-        int quotient = (int)Double.parseDouble(rawDivide(p, q));
 
-        // TODO Fix dvision. Due to parsing it to a double and such, division with very large quotients
-        // will not work as they will reach integer limit, etc
-        return quotient * (int)(this.chunks[0] * b.chunks[0]);
+        Ginteger quotient = new Ginteger(rawDivide(p, q));
+        quotient.chunks[0] = this.chunks[0] * b.chunks[0];
+
+        return quotient;
+    }
+
+    public Ginteger modulo(Ginteger b) {
+        Ginteger quotient = divide(b);
+    
+        Ginteger remainder = subtract(new Ginteger(rawMultiply(b.chunks, quotient.chunks)));
+        remainder.chunks[0] = b.chunks[0];
+        return remainder;
     }
 
     private long[] format(long[] a) {
