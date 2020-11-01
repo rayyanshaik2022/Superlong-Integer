@@ -5,20 +5,6 @@ import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.math.BigInteger;
 
 public class Ginteger {
-    
-    public static void main(String[] args) {
-        Ginteger a = new Ginteger("5816943576806717091");
-        Ginteger b = new Ginteger("-3866887495653167062");
-
-        long start = System.currentTimeMillis();
-        for (int i=0; i<1000000; i++) {
-            //System.out.println(a.add(b));
-            a.add(b);
-            
-        }
-        long end = System.currentTimeMillis();
-        System.out.println("ms: " + (end-start));
-    }
     long[] chunks = new long[6];
     public Ginteger(String n) {
         try{
@@ -321,7 +307,7 @@ public class Ginteger {
             else {
                 sum[0] = 1;
             }
-            
+
             a[0] = a[0] *-1;
             b[0] = b[0] *-1;
         }
