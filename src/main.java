@@ -47,7 +47,7 @@ class Main{
                 String ans = answer.toString().trim();
                 String otp = output.toString().trim();
                 if (ans.equals(otp)) {
-                    System.out.println("Operation " + (i+1) + " Valid");
+                    System.out.println("Operation " + ((i+1)/4) + " Valid");
                 }
                 else {
                     System.out.println("Invalid Operation:");

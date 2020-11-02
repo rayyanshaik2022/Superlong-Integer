@@ -1,10 +1,22 @@
 import java.util.Arrays;
-
-import javax.swing.plaf.synth.SynthOptionPaneUI;
-
 import java.math.BigInteger;
 
 public class Ginteger {
+    public static void main(String[] args) {
+        
+        Ginteger a = new Ginteger("9063298774069980781");
+        Ginteger b = new Ginteger("-846563576230228882");
+
+        long start = System.currentTimeMillis();
+        for (int i=0; i<1; i++) {
+            System.out.println(a.divide(b));
+            a.divide(b);
+            
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("ms: " + (end-start));
+        
+    }
     long[] chunks = new long[6];
     public Ginteger(String n) {
         try{
@@ -62,6 +74,10 @@ public class Ginteger {
     }
 
     public String toString() {
+       /* 
+       Converts the 'chunks' attribute into a Striong
+       */
+       
         String val = "";
         // Appends the chunk to the final string
         for (int i = 5; i>=1; i--) {
@@ -110,7 +126,6 @@ public class Ginteger {
         */
         
         Ginteger quotient = divide(b);
-    
         Ginteger remainder = subtract(new Ginteger(rawMultiply(b.chunks, quotient.chunks)));
         remainder.chunks[0] = b.chunks[0];
         return remainder;
